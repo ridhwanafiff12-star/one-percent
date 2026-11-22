@@ -31,6 +31,7 @@ const FILES = [
   'src/ui/today.js',
   'src/ui/progress.js',
   'src/ui/history.js',
+  'src/ui/icons.js',
   'src/version.js',
 ];
 

@@ -125,7 +125,17 @@ button { font: inherit; color: inherit; }
 .entry[data-cat='finance'] { --cat: var(--finance); }
 
 .entry-meta { display: flex; justify-content: space-between; gap: 1rem; font-size: var(--step--1); }
-.entry-cat { color: var(--cat); font-weight: 600; }
+.entry-cat { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--cat); font-weight: 600; }
+.cat-icon {
+  width: 1.35rem;
+  height: 1.35rem;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 .entry-min { color: var(--ink-soft); font-variant-numeric: lining-nums; }
 .entry-title { font-size: var(--step-1); font-weight: 500; line-height: 1.35; margin-top: 0.15rem; text-wrap: pretty; }
 .entry.is-done .entry-title { color: var(--ink-soft); }

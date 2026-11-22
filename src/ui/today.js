@@ -1,5 +1,6 @@
 /** Today screen: the day's four tasks. */
 import { el } from './dom.js';
+import { categoryIcon } from './icons.js';
 import { CATEGORIES, CATEGORY_LABELS, getTask } from '../library/index.js';
 import { NOTE_MAX } from '../day.js';
 import { daysBetween } from '../date.js';
@@ -53,7 +54,7 @@ function entry(cat, slot, ctx) {
     }),
     el('div', { class: 'entry-body' },
       el('p', { class: 'entry-meta' },
-        el('span', { class: 'entry-cat', text: CATEGORY_LABELS[cat] }),
+        el('span', { class: 'entry-cat' }, categoryIcon(cat), CATEGORY_LABELS[cat]),
         task.minutes ? el('span', { class: 'entry-min', text: `${task.minutes} min` }) : null),
       el('h2', { class: 'entry-title', text: task.title }),
       note,

@@ -57,6 +57,16 @@ await scenario('four cards; completing all four shows ×1.01 and a full dot', as
   assert.match(await page.locator('.heatmap circle').last().getAttribute('class'), /level-4/);
 });
 
+await scenario('each task shows its category icon', async (page) => {
+  await page.goto(BASE);
+  for (const cat of ['health', 'ibadah', 'knowledge', 'finance']) {
+    const icon = page.locator(`.entry[data-cat="${cat}"] svg.cat-icon`);
+    assert.equal(await icon.count(), 1, cat);
+    assert.equal(await icon.getAttribute('aria-hidden'), 'true');
+    assert.equal(await icon.getAttribute('data-icon'), cat);
+  }
+});
+
 await scenario('swap changes the task once, then is disabled', async (page) => {
   await page.goto(BASE);
   const before = (await titles(page))[1];
