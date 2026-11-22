@@ -74,6 +74,23 @@ await scenario('unknown or prototype-named hash routes fall back to Today', asyn
   }
 });
 
+await scenario('a fun fact sits above the tasks and changes at midnight', async (page) => {
+  await page.clock.install({ time: new Date(2026, 10, 22, 23, 59, 0) });
+  await page.goto(BASE);
+  const fact = page.locator('.fact');
+  assert.equal(await fact.count(), 1);
+  const factBox = await fact.boundingBox();
+  const firstEntry = await page.locator('.entry').first().boundingBox();
+  assert.ok(factBox.y < firstEntry.y, 'fact is above the first task');
+  const first = await page.locator('.fact-text').textContent();
+  assert.ok(first.length > 20);
+  assert.ok((await page.locator('.fact-source').textContent()).length > 0);
+  await page.reload();
+  assert.equal(await page.locator('.fact-text').textContent(), first, 'same fact all day');
+  await page.clock.runFor(2 * 60_000);
+  assert.notEqual(await page.locator('.fact-text').textContent(), first, 'new fact next day');
+});
+
 await scenario('swap changes the task once, then is disabled', async (page) => {
   await page.goto(BASE);
   const before = (await titles(page))[1];

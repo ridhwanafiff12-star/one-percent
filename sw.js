@@ -4,7 +4,7 @@
  * then fetch a fresh copy in the background so the next launch gets updates.
  * CACHE must match src/version.js (enforced by tests/version.test.js).
  */
-const CACHE = 'kaizen-1.0.0';
+const CACHE = 'kaizen-1.1.0';
 const FILES = [
   './',
   'index.html',
@@ -21,6 +21,7 @@ const FILES = [
   'src/score.js',
   'src/store.js',
   'src/backup.js',
+  'src/facts.js',
   'src/library/index.js',
   'src/library/health.js',
   'src/library/ibadah.js',

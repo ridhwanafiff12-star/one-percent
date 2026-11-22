@@ -4,6 +4,7 @@ import { categoryIcon } from './icons.js';
 import { CATEGORIES, CATEGORY_LABELS, getTask } from '../library/index.js';
 import { NOTE_MAX } from '../day.js';
 import { daysBetween } from '../date.js';
+import { factForDay } from '../facts.js';
 
 const RETIRED = { title: 'Retired task', minutes: 0, why: 'This task is no longer in the library.', source: { label: 'Kaizen' } };
 
@@ -67,10 +68,21 @@ function entry(cat, slot, ctx) {
         }))));
 }
 
+function factCard(todayKey) {
+  const fact = factForDay(todayKey);
+  const source = sourceLine(fact.source);
+  source.className = 'fact-source';
+  return el('aside', { class: 'fact', attrs: { 'aria-label': 'Fact of the day' } },
+    el('p', { class: 'fact-topic', text: `${fact.topic} fact` }),
+    el('p', { class: 'fact-text', text: fact.text }),
+    source);
+}
+
 /** @param {HTMLElement} root @param {{state: any, todayKey: string, now: Date, actions: any, ui: {openWhy: Set<string>}}} ctx */
 export function renderToday(root, ctx) {
   const day = ctx.state.days[ctx.todayKey];
   root.replaceChildren(
     heading(ctx.todayKey, ctx.state, ctx.now),
+    factCard(ctx.todayKey),
     el('ul', { class: 'entries' }, ...CATEGORIES.map((c) => entry(c, day[c], ctx))));
 }
