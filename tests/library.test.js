@@ -53,11 +53,17 @@ test('validator rejects task whose category field mismatches its list', () => {
   assert.equal(validateLibrary(lib([ok({ category: 'finance' })])).length, 1);
 });
 
-test('health and knowledge have at least 30 tasks', () => {
-  for (const c of ['health', 'knowledge']) assert.ok(LIBRARY[c].length >= 30, `${c}: ${LIBRARY[c].length}`);
+test('every category has at least 30 tasks', () => {
+  for (const c of CATEGORIES) assert.ok(LIBRARY[c].length >= 30, `${c}: ${LIBRARY[c].length}`);
 });
 
 test('getTask finds by id and returns undefined for unknown', () => {
   assert.equal(getTask(LIBRARY.health[0].id), LIBRARY.health[0]);
   assert.equal(getTask('h99zz'), undefined);
+});
+
+const IBADAH_REF = /^(Qur'an \d{1,3}:\d{1,3}(-\d{1,3})?|Sahih al-Bukhari \d+|Sahih Muslim \d+|Sunan (Abi Dawud|at-Tirmidhi|an-Nasa'i|Ibn Majah) \d+|Riyad as-Salihin \d+)/;
+
+test('every ibadah task cites a Qur\'an or hadith reference', () => {
+  for (const task of LIBRARY.ibadah) assert.match(task.source.label, IBADAH_REF, task.id);
 });
