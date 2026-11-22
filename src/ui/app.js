@@ -1,7 +1,7 @@
 /** App boot: state, persistence, routing, day rollover. */
 import { dayKey } from '../date.js';
 import { ensureDay, toggleDone, setNote, reroll } from '../day.js';
-import { load, save } from '../store.js';
+import { load, save, requestPersistence } from '../store.js';
 import { streak } from '../score.js';
 import { exportState, backupFilename, parseBackup } from '../backup.js';
 import { renderToday } from './today.js';
@@ -114,3 +114,8 @@ addEventListener('hashchange', () => { ui.historyMsg = ''; render(); root.focus(
 document.addEventListener('visibilitychange', () => { if (!document.hidden) checkRollover(); });
 addEventListener('focus', checkRollover);
 setInterval(checkRollover, 60_000);
+
+requestPersistence();
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => { /* offline support unavailable; app still works */ });
+}
