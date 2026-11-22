@@ -201,7 +201,7 @@ await scenario('manifest is valid and installable', async (page) => {
   assert.equal(m.name, 'Kaizen');
   assert.equal(m.display, 'standalone');
   assert.ok(m.icons.some((i) => i.sizes === '512x512' && i.purpose === 'maskable'));
-  for (const i of m.icons) assert.equal((await page.request.get(new URL(i.src, BASE).href)).status(), 200);
+  for (const i of m.icons) assert.equal((await page.goto(new URL(i.src, BASE).href)).status(), 200, i.src);
 });
 
 await browser.close();
