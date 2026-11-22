@@ -67,6 +67,13 @@ await scenario('each task shows its category icon', async (page) => {
   }
 });
 
+await scenario('unknown or prototype-named hash routes fall back to Today', async (page) => {
+  for (const h of ['#constructor', '#toString', '#__proto__', '#nope']) {
+    await page.goto(BASE + h);
+    assert.equal(await page.locator('.entry').count(), 4, h);
+  }
+});
+
 await scenario('swap changes the task once, then is disabled', async (page) => {
   await page.goto(BASE);
   const before = (await titles(page))[1];

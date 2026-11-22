@@ -26,6 +26,7 @@ function dots(cells) {
   cells.forEach((c, i) => {
     const col = Math.floor(i / 7), row = i % 7;
     const circle = svg('circle', { class: `dot level-${c.level}`, cx: col * S + S / 2, cy: row * S + S / 2, r: c.level ? 2.5 + c.level * (R - 2.5) / 4 : 1.6, 'aria-label': `${c.key}: ${c.level} of 4` });
+    // nosemgrep: missing-template-string-indicator — false positive: object literal inside ${}
     circle.append(svg('title', {}, document.createTextNode(`${fmtDate(c.key, { day: 'numeric', month: 'short' })}: ${c.level} of 4`)));
     g.append(circle);
   });

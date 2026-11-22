@@ -5,7 +5,7 @@ import { CATEGORIES as CATS } from './library/index.js';
 
 export const MAX_IMPORT_CHARS = 1_000_000;
 
-const PREFIX = { health: 'h', ibadah: 'i', knowledge: 'k', finance: 'f' };
+const ID_RE = { health: /^h\d{2}$/, ibadah: /^i\d{2}$/, knowledge: /^k\d{2}$/, finance: /^f\d{2}$/ };
 
 class Invalid extends Error {}
 const fail = () => { throw new Invalid(); };
@@ -18,7 +18,7 @@ const hasExactKeys = (o, keys) => {
 };
 const isDayKey = (k) => typeof k === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(k) && addDays(k, 0) === k;
 const isIso = (s) => typeof s === 'string' && s.length <= 30 && !Number.isNaN(Date.parse(s));
-const isTaskId = (id, cat) => typeof id === 'string' && new RegExp(`^${PREFIX[cat]}\\d{2}$`).test(id);
+const isTaskId = (id, cat) => typeof id === 'string' && ID_RE[cat].test(id);
 
 function parseSlot(o, cat) {
   check(isPlain(o) && hasExactKeys(o, ['id', 'done', 'doneAt', 'note', 'rerolled']));

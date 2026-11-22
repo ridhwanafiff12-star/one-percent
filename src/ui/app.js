@@ -80,6 +80,7 @@ export const actions = {
       render();
       return;
     }
+    // nosemgrep: javascript-confirm — deliberate native confirmation before replacing all data
     if (!confirm('Replace all current progress with this backup? This can’t be undone.')) return;
     state = ensureDay(r.state, todayKey, rng);
     ui.historyMsg = 'Backup imported.';
@@ -98,7 +99,7 @@ const IMPORT_ERRORS = {
 
 function currentTab() {
   const t = location.hash.slice(1);
-  return screens[t] ? t : 'today';
+  return Object.hasOwn(screens, t) ? t : 'today';
 }
 
 function render() {
@@ -108,6 +109,7 @@ function render() {
     else a.removeAttribute('aria-current');
   }
   const focusKey = document.activeElement?.dataset?.focus;
+  // nosemgrep: unsafe-dynamic-method — tab is restricted to own keys of screens by currentTab()
   screens[tab](root, { state, todayKey, now: new Date(), actions, ui });
   if (focusKey) root.querySelector(`[data-focus="${focusKey}"]`)?.focus({ preventScroll: true });
 }
