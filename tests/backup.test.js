@@ -89,3 +89,25 @@ test('parseState returns null for garbage', () => {
   assert.equal(parseState([]), null);
   assert.equal(parseState({}), null);
 });
+
+import { needsBackupReminder } from '../src/backup.js';
+
+const withDays = (n, lastBackupAt = null) => {
+  const days = {};
+  for (let i = 1; i <= n; i++) days[`2026-11-${String(i).padStart(2, '0')}`] = {};
+  return { lastBackupAt, days };
+};
+const NOW = new Date('2026-11-22T12:00:00Z');
+
+test('no reminder with fewer than 7 days of data', () => {
+  assert.equal(needsBackupReminder(withDays(6), NOW), false);
+});
+
+test('reminder when never backed up and ≥7 days of data', () => {
+  assert.equal(needsBackupReminder(withDays(7), NOW), true);
+});
+
+test('reminder only when last backup is older than 30 days', () => {
+  assert.equal(needsBackupReminder(withDays(10, '2026-11-01T00:00:00Z'), NOW), false);
+  assert.equal(needsBackupReminder(withDays(10, '2026-10-20T00:00:00Z'), NOW), true);
+});

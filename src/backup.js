@@ -84,3 +84,13 @@ export function parseBackup(text) {
   const state = parseState(raw.state);
   return state ? { ok: true, state } : { ok: false, reason: 'invalid' };
 }
+
+const REMIND_AFTER_MS = 30 * 86_400_000;
+const MIN_DAYS_FOR_REMINDER = 7;
+
+/** Nudge to export when there is a week+ of data and no backup in the last 30 days. */
+export function needsBackupReminder(state, now) {
+  if (Object.keys(state.days).length < MIN_DAYS_FOR_REMINDER) return false;
+  if (state.lastBackupAt === null) return true;
+  return now.getTime() - Date.parse(state.lastBackupAt) > REMIND_AFTER_MS;
+}
