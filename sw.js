@@ -1,5 +1,10 @@
-/* Kaizen service worker: precache the app shell, serve it cache-first. Same-origin only. */
-const CACHE = 'kaizen-v1';
+/*
+ * Kaizen service worker. Same-origin GETs only.
+ * Strategy: stale-while-revalidate — answer from cache instantly (works offline),
+ * then fetch a fresh copy in the background so the next launch gets updates.
+ * CACHE must match src/version.js (enforced by tests/version.test.js).
+ */
+const CACHE = 'kaizen-1.0.0';
 const FILES = [
   './',
   'index.html',
@@ -26,11 +31,11 @@ const FILES = [
   'src/ui/today.js',
   'src/ui/progress.js',
   'src/ui/history.js',
-
+  'src/version.js',
 ];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)).then(() => self.skipWaiting()));
+  event.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES.map((f) => new Request(f, { cache: 'reload' })))).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', (event) => {
@@ -44,7 +49,12 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET' || new URL(req.url).origin !== self.location.origin) return;
-  event.respondWith(
-    caches.match(req, { ignoreSearch: true }).then((hit) => hit ?? fetch(req)),
-  );
+  event.respondWith(caches.open(CACHE).then(async (cache) => {
+    const hit = await cache.match(req, { ignoreSearch: true });
+    const fresh = fetch(req, { cache: 'no-cache' })
+      .then((res) => { if (res.ok) cache.put(req, res.clone()); return res; })
+      .catch(() => undefined);
+    if (hit) { event.waitUntil(fresh); return hit; }
+    return (await fresh) ?? Response.error();
+  }));
 });

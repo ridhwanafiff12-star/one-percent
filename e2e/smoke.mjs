@@ -141,6 +141,43 @@ await scenario('works offline after first visit', async (page, context) => {
   assert.equal(await page.locator('.entry').count(), 4);
 });
 
+await scenario('keyboard focus stays on the stamp after toggling it', async (page) => {
+  await page.goto(BASE);
+  await page.locator('.stamp').first().focus();
+  await page.keyboard.press('Enter');
+  assert.equal(await page.locator('.stamp').first().getAttribute('aria-pressed'), 'true');
+  assert.equal(await page.evaluate(() => document.activeElement?.dataset.focus), 'stamp:health');
+  assert.match(await page.locator('#live').textContent(), /Marked done/);
+});
+
+await scenario('tapping another task while typing a note still registers both', async (page) => {
+  await page.goto(BASE);
+  await page.locator('.stamp').first().click();
+  await page.locator('.note').fill('Felt good');
+  await page.locator('.stamp').nth(1).click();
+  assert.equal(await page.locator('.stamp').nth(1).getAttribute('aria-pressed'), 'true');
+  await page.click('a[data-tab="history"]');
+  assert.equal(await page.locator('.h-note').first().textContent(), 'Felt good');
+});
+
+await scenario('unreadable data that cannot be copied aside is never overwritten', async (page) => {
+  await page.addInitScript(() => {
+    if (sessionStorage.getItem('seeded')) return;
+    sessionStorage.setItem('seeded', '1');
+    localStorage.setItem('kaizen.state', '{bad json');
+    const orig = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (k, v) {
+      if (k === 'kaizen.state.corrupt') throw new DOMException('full', 'QuotaExceededError');
+      return orig.call(this, k, v);
+    };
+  });
+  await page.goto(BASE);
+  assert.equal(await page.locator('#banner').isVisible(), true);
+  assert.match(await page.locator('#banner').textContent(), /not being saved/);
+  await page.locator('.stamp').first().click();
+  assert.equal(await page.evaluate(() => localStorage.getItem('kaizen.state')), '{bad json');
+});
+
 await scenario('manifest is valid and installable', async (page) => {
   const res = await page.goto(new URL('manifest.webmanifest', BASE).href);
   const m = await res.json();

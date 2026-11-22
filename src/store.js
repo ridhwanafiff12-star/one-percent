@@ -15,7 +15,8 @@ export function migrate(raw) {
 /**
  * @param {Storage|null} storage
  * @param {string} todayKey
- * @returns {{state: import('./day.js').State, error: null|'corrupt'|'unavailable'}}
+ * @returns {{state: import('./day.js').State, error: null|'corrupt'|'corrupt_unsaved'|'unavailable'}}
+ * 'corrupt_unsaved': the unreadable data could not be copied aside — callers must not overwrite it.
  */
 export function load(storage, todayKey) {
   let raw;
@@ -29,7 +30,11 @@ export function load(storage, todayKey) {
   let state = null;
   try { state = parseState(migrate(JSON.parse(raw))); } catch { state = null; }
   if (state) return { state, error: null };
-  try { storage.setItem(CORRUPT_KEY, raw); } catch { /* best effort */ }
+  try {
+    storage.setItem(CORRUPT_KEY, raw);
+  } catch {
+    return { state: emptyState(todayKey), error: 'corrupt_unsaved' };
+  }
   return { state: emptyState(todayKey), error: 'corrupt' };
 }
 

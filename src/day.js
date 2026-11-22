@@ -63,5 +63,5 @@ export function reroll(state, key, cat, rng) {
   if (slot.rerolled || slot.done) return state;
   const { id, bag } = drawFor(state, cat, rng, slot.id);
   const next = updateSlot(state, key, cat, { id, rerolled: true });
-  return { ...next, bags: { ...next.bags, [cat]: [slot.id, ...bag] } };
+  return { ...next, bags: { ...next.bags, [cat]: [slot.id, ...bag.filter((x) => x !== slot.id)] } };
 }

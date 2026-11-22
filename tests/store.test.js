@@ -76,3 +76,8 @@ test('requestPersistence resolves to a boolean in all cases', async () => {
   assert.equal(await requestPersistence({ storage: { persist: async () => { throw new Error('x'); } } }), false);
   assert.equal(await requestPersistence({}), false);
 });
+
+test('corrupt load whose backup copy fails reports corrupt_unsaved', () => {
+  const st = fakeStorage({ [STORAGE_KEY]: '{bad' }, { throwOnSet: new DOMException('full', 'QuotaExceededError') });
+  assert.equal(load(st, D).error, 'corrupt_unsaved');
+});

@@ -81,3 +81,13 @@ test('state transitions never mutate their input', () => {
   setNote(s, D, 'health', 'x');
   reroll(s, D, 'health', seeded(3));
 });
+
+test('reroll on the day the bag ran out does not duplicate the old id in the bag', () => {
+  let s = fresh();
+  s = { ...s, bags: { ...s.bags, health: [] } };
+  const old = s.days[D].health.id;
+  const r = reroll(s, D, 'health', seeded(11));
+  const bag = r.bags.health;
+  assert.equal(bag.filter((id) => id === old).length, 1);
+  assert.equal(new Set(bag).size, bag.length);
+});

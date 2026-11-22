@@ -11,11 +11,13 @@ export const dayFraction = (day) => doneCount(day) / 4;
 
 /** @returns {{key: string, multiplier: number}[]} */
 export function scoreSeries(state, todayKey) {
-  const n = daysBetween(state.firstDay, todayKey);
+  // Clock moved back or a backup from the future: start no later than today.
+  const start = daysBetween(state.firstDay, todayKey) < 0 ? todayKey : state.firstDay;
+  const n = daysBetween(start, todayKey);
   const out = [];
   let m = 1;
   for (let i = 0; i <= n; i++) {
-    const key = addDays(state.firstDay, i);
+    const key = addDays(start, i);
     m *= 1 + 0.01 * dayFraction(state.days[key]);
     out.push({ key, multiplier: m });
   }

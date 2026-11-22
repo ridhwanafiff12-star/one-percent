@@ -69,3 +69,8 @@ test('formatMultiplier shows × and 2 decimals', () => {
   assert.equal(formatMultiplier(1.2649), '×1.26');
   assert.equal(formatMultiplier(1), '×1.00');
 });
+
+test('scoreSeries always has at least today when firstDay is in the future', () => {
+  const s = state('2026-11-30', {});
+  assert.deepEqual(scoreSeries(s, '2026-11-22'), [{ key: '2026-11-22', multiplier: 1 }]);
+});

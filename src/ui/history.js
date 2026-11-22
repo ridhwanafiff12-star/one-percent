@@ -2,6 +2,7 @@
 import { el } from './dom.js';
 import { CATEGORIES, CATEGORY_LABELS, getTask } from '../library/index.js';
 import { needsBackupReminder } from '../backup.js';
+import { VERSION } from '../version.js';
 
 const fmtDate = (key) => new Date(`${key}T12:00:00`).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
 
@@ -12,9 +13,9 @@ function dayEntry(key, day) {
     el('ul', { class: 'h-tasks' }, ...CATEGORIES.map((c) => {
       const s = day[c];
       return el('li', { class: `h-task${s.done ? ' is-done' : ''}`, attrs: { 'data-cat': c } },
-        el('span', { class: 'h-mark', text: s.done ? '✓' : '–', attrs: { 'aria-label': s.done ? 'Done' : 'Not done' } }),
+        el('span', { class: 'h-mark', text: s.done ? '✓' : '–', attrs: { 'aria-hidden': 'true' } }),
         el('span', { class: 'h-text' },
-          el('span', { class: 'visually-hidden', text: `${CATEGORY_LABELS[c]}: ` }),
+          el('span', { class: 'visually-hidden', text: `${CATEGORY_LABELS[c]}, ${s.done ? 'done' : 'not done'}: ` }),
           getTask(s.id)?.title ?? 'Retired task',
           s.note ? el('span', { class: 'h-note', text: s.note }) : null));
     })));
@@ -44,5 +45,5 @@ export function renderHistory(root, { state, actions, ui }) {
         el('button', { class: 'btn', text: 'Import backup', attrs: { type: 'button' }, on: { click: () => fileInput.click() } }),
         fileInput),
       el('p', { class: 'status', text: ui.historyMsg ?? '', attrs: { role: 'status' } }),
-      el('p', { class: 'version', text: 'Kaizen 1.0.0' })));
+      el('p', { class: 'version', text: `Kaizen ${VERSION}` })));
 }

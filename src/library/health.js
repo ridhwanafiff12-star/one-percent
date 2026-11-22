@@ -67,7 +67,7 @@ export const HEALTH = [
     'Regularly noting things you are grateful for was linked to higher well-being and more exercise in controlled studies.',
     'Emmons & McCullough (2003), Journal of Personality and Social Psychology, 84(2):377–389'),
   t(21, 'Do a 5-minute body-scan meditation', 5,
-    'Mindfulness meditation programs produce moderate improvements in anxiety, depression and pain.',
+    'Mindfulness meditation programs produce small but reliable improvements in anxiety, depression and pain.',
     'Goyal et al. (2014), JAMA Internal Medicine, 174(3):357–368'),
   t(22, 'Message or call a friend you haven’t talked to in a while', 5,
     'Strong social relationships are associated with about 50% higher odds of survival, an effect comparable to quitting smoking.',

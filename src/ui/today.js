@@ -15,7 +15,7 @@ function heading(todayKey, state, now) {
   return el('header', { class: 'page-head' },
     el('h1', { class: 'page-title' }, el('span', { class: 'weekday', text: weekday }), el('span', { class: 'date', text: date })),
     el('p', { class: 'day-no', text: `Day ${dayNo}` }),
-    el('p', { class: 'lede', text: status, attrs: { 'aria-live': 'polite' } }));
+    el('p', { class: 'lede', text: status }));
 }
 
 function sourceLine(source) {
@@ -40,7 +40,7 @@ function entry(cat, slot, ctx) {
 
   const note = slot.done && el('input', {
     class: 'note',
-    attrs: { type: 'text', maxlength: NOTE_MAX, placeholder: 'Add a note (optional)', 'aria-label': `Note for ${task.title}`, value: slot.note },
+    attrs: { type: 'text', maxlength: NOTE_MAX, placeholder: 'Add a note (optional)', 'aria-label': `Note for ${task.title}`, value: slot.note, 'data-focus': `note:${cat}` },
     on: { change: (e) => actions.setNote(cat, e.target.value) },
   });
 
@@ -48,7 +48,7 @@ function entry(cat, slot, ctx) {
   return el('li', { class: `entry${slot.done ? ' is-done' : ''}`, attrs: { 'data-cat': cat } },
     el('button', {
       class: 'stamp',
-      attrs: { type: 'button', 'aria-pressed': String(slot.done), 'aria-label': `${slot.done ? 'Undo' : 'Mark done'}: ${task.title}` },
+      attrs: { type: 'button', 'aria-pressed': String(slot.done), 'aria-label': `Done: ${task.title}`, 'data-focus': `stamp:${cat}` },
       on: { click: () => actions.toggleDone(cat) },
     }),
     el('div', { class: 'entry-body' },
@@ -61,7 +61,7 @@ function entry(cat, slot, ctx) {
         why,
         el('button', {
           class: 'swap', text: swapLabel,
-          attrs: { type: 'button', disabled: slot.rerolled || slot.done, 'aria-label': `${swapLabel}: ${task.title}` },
+          attrs: { type: 'button', disabled: slot.rerolled || slot.done, 'aria-label': `${swapLabel}: ${task.title}`, 'data-focus': `swap:${cat}` },
           on: { click: () => actions.reroll(cat) },
         }))));
 }
